@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#pdf ordner so das die dateien nicht hochgeladen werden
+pdfs/
