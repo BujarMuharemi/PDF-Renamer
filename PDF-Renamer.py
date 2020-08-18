@@ -19,11 +19,13 @@ import PySimpleGUI as sg
 
 
 
-sg.theme('DarkAmber')	# Add a touch of color
+#sg.theme('DarkAmber')	# Add a touch of color
 # All the stuff inside your window.
-layout = [  [sg.Text('Wähle den Pdf Ordner'),sg.Input(),sg.FolderBrowse()],
-                   
-            [sg.Button('Ok'), sg.Button('Cancel')] ]
+
+layout = [  [sg.Text('Wähle den PDF Ordner'),sg.Input(),sg.FolderBrowse()],                   
+            [sg.Button('Ok'), sg.Button('Cancel')],
+            [sg.Text('Gefundene PDFs')] ,
+            [sg.Listbox(values=(), size=(60, 6), key='-FILELIST-')] ]
 
 
 # Create the Window
@@ -34,6 +36,8 @@ while True:
     if event == sg.WIN_CLOSED or event == 'Cancel':	# if user closes window or clicks cancel
         break
     print('You entered ', values[0])
+    window.Element("-FILELIST-").Update(values=['asdgggf','asdf','asdf'])
+
 
 window.close()
 
