@@ -21,7 +21,7 @@ import PySimpleGUI as sg
 
 #sg.theme('DarkAmber')	# Add a touch of color
 # All the stuff inside your window.
-
+'''
 layout = [  [sg.Text('Wähle den PDF Ordner'),sg.Input(),sg.FolderBrowse()],                   
             [sg.Button('Ok'), sg.Button('Cancel')],
             [sg.Text('Gefundene PDFs')] ,
@@ -40,7 +40,7 @@ while True:
 
 
 window.close()
-
+'''
 
 def getFiles(path):
         return [f for f in listdir(path) if isfile(join(path, f)) and f.endswith(".pdf")]
@@ -81,20 +81,27 @@ for j in files:
 
         #looping threw each line
         for i in array: 
-
+                #print(i)
                 #check if space is in line there                
                 lineCheck = re.search("\s[R][0-9]*$",i)
                 if(lineCheck):
                         lineCheck = re.split("\s",i)
-                        print(lineCheck[1])
+                        #print(lineCheck[1])
                         os.rename(r""+pdfPath+j,pdfPath+lineCheck[1]+".pdf")
 
 
                 x = re.search("^R+[G]*[0-9]+",i)
+
+                x = re.search("\s[G][m][bB][Hh]",i)
+
+                datum = re.search("[0-9]+[.]+[0-9]+[.]+[0-9]+",i)
+
                 if(x):                        
                         print(i)
-                        os.rename(r""+pdfPath+j,pdfPath+i+".pdf")                       
-                        
+                        break
+                        ##os.rename(r""+pdfPath+j,pdfPath+i+".pdf")                       
+                if(datum):
+                        print("Datei: "+j+"\tDatum: "+i)
                
         #os.rename(pdfPath+pdfName,pdfPath+fileName+iban+".pdf")
        
