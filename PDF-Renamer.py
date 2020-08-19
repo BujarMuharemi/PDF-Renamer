@@ -58,13 +58,13 @@ cmd = r"python C:\Users\Resul\AppData\Local\Programs\Python\Python37-32\Scripts\
 #print(getFiles(pdfPath))
 
 files = getFiles(pdfPath)
-
+companyName=""
 
 #looping threw all files
-for j in files:       
-        
+for file in files:       
+        print("Datein\t"+file)
         #cmd = pdt2textCMD+" "+pdfPath+pdfName
-        jFix=r""+j
+        jFix=r""+file
         newName =""
         #if(" " in pdfPath):
                 #newName = j.replace(r" ",r"_")
@@ -78,6 +78,7 @@ for j in files:
         output = stream.read()
 
         array=output.splitlines() # splitting the whole pdf by lines
+        arrayCounter=0  #used to count, if a search failed
 
         #looping threw each line
         for i in array: 
@@ -87,24 +88,45 @@ for j in files:
                 if(lineCheck):
                         lineCheck = re.split("\s",i)
                         #print(lineCheck[1])
-                        os.rename(r""+pdfPath+j,pdfPath+lineCheck[1]+".pdf")
+                        os.rename(r""+pdfPath+file,pdfPath+lineCheck[1]+".pdf")
 
 
-                x = re.search("^R+[G]*[0-9]+",i)
+                #x = re.search("^R+[G]*[0-9]+",i)
 
-                x = re.search("\s[G][m][bB][Hh]",i)
-
-                datum = re.search("[0-9]+[.]+[0-9]+[.]+[0-9]+",i)
-
-                if(x):                        
-                        print(i)
-                        break
-                        ##os.rename(r""+pdfPath+j,pdfPath+i+".pdf")                       
-                if(datum):
-                        print("Datei: "+j+"\tDatum: "+i)
+                x = re.search("\s[G][m][bB][Hh]",i)     #searching for the GmbH string
                
+                # finding company name
+                if(x):                        
+                        #print(i)       
+                        companyName=""                 
+                        justName=re.split("\s",i)       #splitting by spaces
+
+                        for k in justName:      #adding the array elements together till GmbH appears
+                                companyName+=k+" "
+                                if("GmbH" in k):
+                                        break
+                                
+                        print("Name:\t"+companyName)                        
+                        break
+                        ##os.rename(r""+pdfPath+j,pdfPath+i+".pdf")   
+                else:
+                        #print("no company name") 
+                        arrayCounter+=1   
+
+                               
+                #if(datum):
+                        #print("Datei: "+j+"\tDatum: "+i)
+
+                #datum = re.search("[0-9]+[.]+[0-9]+[.]+[0-9]+",i)
+        #print(arrayCounter,len(array))
+        
+        #checking if a file is empty
+        if(arrayCounter==len(array)):
+                print("Kein Firmennamen gefunden")
+
+        
         #os.rename(pdfPath+pdfName,pdfPath+fileName+iban+".pdf")
-       
+        print("\n")
 
 
 #input()
