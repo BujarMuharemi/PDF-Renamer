@@ -60,6 +60,8 @@ cmd = r"python C:\Users\Resul\AppData\Local\Programs\Python\Python37-32\Scripts\
 files = getFiles(pdfPath)
 companyName=""
 billDate=""
+billPrice=0.0
+
 
 #looping threw all files
 for file in files:       
@@ -83,6 +85,9 @@ for file in files:
 
         dateFoundFlag=False
         nameFoundFlag=False
+
+        priceList=[]
+
 
         #_looping threw each line
         for i in array: 
@@ -136,6 +141,42 @@ for file in files:
                 else:   
                         arrayCounter+=1
                         #print("kein Datum gefunden")
+
+                #__finding price
+               
+                priceSearch = re.search("^[0-9]+[,]+[0-9]+",i)   
+                
+
+                if(priceSearch):
+                        priceList.append(i)
+                        #print(i)
+
+                #print(priceList)
+                #map(float,priceList)
+                floatPriceList=[0.0]
+                
+                
+                for price in priceList:
+                        justPrice=re.split("\s",price)
+                        #print(justPrice,end =" ")
+                        #print(len(justPrice),end =" ")
+
+                        #print(justPrice[0])
+                        
+                        #print(float(justPrice[0].replace(",",".")))
+                        floatPriceList.append(float(justPrice[0].replace(",",".")))
+                        #print(price)
+
+                        #print(price, end=" ")
+                        #print(type(price), end=" ")
+                
+                #print(max(floatPriceList))
+                billPrice=max(floatPriceList)
+
+
+        print("Preis:\t"+str(billPrice))
+                
+
                 
         #print(arrayCounter,len(array))
         
