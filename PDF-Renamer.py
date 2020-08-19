@@ -59,10 +59,11 @@ cmd = r"python C:\Users\Resul\AppData\Local\Programs\Python\Python37-32\Scripts\
 
 files = getFiles(pdfPath)
 companyName=""
+billDate=""
 
 #looping threw all files
 for file in files:       
-        print("Datein\t"+file)
+        print("___Datei\t"+file)
         #cmd = pdt2textCMD+" "+pdfPath+pdfName
         jFix=r""+file
         newName =""
@@ -80,7 +81,10 @@ for file in files:
         array=output.splitlines() # splitting the whole pdf by lines
         arrayCounter=0  #used to count, if a search failed
 
-        #looping threw each line
+        dateFoundFlag=False
+        nameFoundFlag=False
+
+        #_looping threw each line
         for i in array: 
                 #print(i)
                 #check if space is in line there                
@@ -93,10 +97,10 @@ for file in files:
 
                 #x = re.search("^R+[G]*[0-9]+",i)
 
-                x = re.search("\s[G][m][bB][Hh]",i)     #searching for the GmbH string
+                gmbhSearch = re.search("\s[G][m][bB][Hh]",i)     #searching for the GmbH string
                
-                # finding company name
-                if(x):                        
+                #__finding company name
+                if(gmbhSearch and not nameFoundFlag):                        
                         #print(i)       
                         companyName=""                 
                         justName=re.split("\s",i)       #splitting by spaces
@@ -105,24 +109,41 @@ for file in files:
                                 companyName+=k+" "
                                 if("GmbH" in k):
                                         break
-                                
-                        print("Name:\t"+companyName)                        
-                        break
+
+                        print("Name:\t"+companyName)   
+                        nameFoundFlag=True                     
+                        #break
                         ##os.rename(r""+pdfPath+j,pdfPath+i+".pdf")   
                 else:
                         #print("no company name") 
                         arrayCounter+=1   
+                
+                #__finding date of the bill
+                datumSearch_1 = re.search("[0-9]+[.]+[0-9]+[.]+[0-9]+",i)     
+                datumSearch_2 = re.search("[0-9]+[-]+[0-9]+[-]+[0-9]+",i)     
 
-                               
-                #if(datum):
-                        #print("Datei: "+j+"\tDatum: "+i)
+                if((datumSearch_1 or datumSearch_2) and not dateFoundFlag):
+                        justDate=re.split("\s",i)
+                        if(len(justDate)>1):
+                                billDate=justDate[1]
+                        else:
+                                billDate=justDate[0]
 
-                #datum = re.search("[0-9]+[.]+[0-9]+[.]+[0-9]+",i)
+                        print("Datum:\t"+billDate)
+                        dateFoundFlag=True
+                        #print(justDate)
+                        #break #remove to get all search results
+                else:   
+                        arrayCounter+=1
+                        #print("kein Datum gefunden")
+                
         #print(arrayCounter,len(array))
         
         #checking if a file is empty
         if(arrayCounter==len(array)):
                 print("Kein Firmennamen gefunden")
+        
+        
 
         
         #os.rename(pdfPath+pdfName,pdfPath+fileName+iban+".pdf")
