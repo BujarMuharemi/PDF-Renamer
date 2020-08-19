@@ -58,7 +58,7 @@ cmd = r"python C:\Users\Resul\AppData\Local\Programs\Python\Python37-32\Scripts\
 #print(getFiles(pdfPath))
 
 files = getFiles(pdfPath)
-companyName=""
+companyName="keinName"
 billDate=""
 billPrice=0.0
 
@@ -91,20 +91,22 @@ for file in files:
 
         #_looping threw each line
         for i in array: 
+                # !delete 
                 #print(i)
                 #check if space is in line there                
                 lineCheck = re.search("\s[R][0-9]*$",i)
                 if(lineCheck):
                         lineCheck = re.split("\s",i)
                         #print(lineCheck[1])
-                        os.rename(r""+pdfPath+file,pdfPath+lineCheck[1]+".pdf")
-
+                        #os.rename(r""+pdfPath+file,pdfPath+lineCheck[1]+".pdf")
 
                 #x = re.search("^R+[G]*[0-9]+",i)
+                #___
 
+
+                 #__finding company name
                 gmbhSearch = re.search("\s[G][m][bB][Hh]",i)     #searching for the GmbH string
-               
-                #__finding company name
+                             
                 if(gmbhSearch and not nameFoundFlag):                        
                         #print(i)       
                         companyName=""                 
@@ -120,7 +122,7 @@ for file in files:
                         #break
                         ##os.rename(r""+pdfPath+j,pdfPath+i+".pdf")   
                 else:
-                        #print("no company name") 
+                        #print("no company name")                                             
                         arrayCounter+=1   
                 
                 #__finding date of the bill
@@ -128,7 +130,7 @@ for file in files:
                 datumSearch_2 = re.search("[0-9]+[-]+[0-9]+[-]+[0-9]+",i)     
 
                 if((datumSearch_1 or datumSearch_2) and not dateFoundFlag):
-                        justDate=re.split("\s",i)
+                        justDate=re.split("\s",i)       #splitting by space, if some "Datum" etc is still there
                         if(len(justDate)>1):
                                 billDate=justDate[1]
                         else:
@@ -138,26 +140,23 @@ for file in files:
                         dateFoundFlag=True
                         #print(justDate)
                         #break #remove to get all search results
-                else:   
-                        arrayCounter+=1
+                #else:   
+                        #arrayCounter+=1
                         #print("kein Datum gefunden")
 
-                #__finding price
-               
+                #__finding price               
                 priceSearch = re.search("^[0-9]+[,]+[0-9]+",i)   
                 
-
                 if(priceSearch):
                         priceList.append(i)
                         #print(i)
 
                 #print(priceList)
                 #map(float,priceList)
-                floatPriceList=[0.0]
-                
+                floatPriceList=[0.0] #must have for usage of max() function               
                 
                 for price in priceList:
-                        justPrice=re.split("\s",price)
+                        justPrice=re.split("\s",price) # splitting by spaces if EUR etc is there
                         #print(justPrice,end =" ")
                         #print(len(justPrice),end =" ")
 
@@ -175,19 +174,21 @@ for file in files:
 
 
         print("Preis:\t"+str(billPrice))
-                
+              
 
                 
         #print(arrayCounter,len(array))
         
-        #checking if a file is empty
+        #checking if there wasn't any company name found 
         if(arrayCounter==len(array)):
-                print("Kein Firmennamen gefunden")
+                #print("Kein Firmennamen gefunden")
+                companyName="keinName"    
         
         
-
-        
-        #os.rename(pdfPath+pdfName,pdfPath+fileName+iban+".pdf")
+        print("Name:\t"+companyName+"\tDatum:\t"+billDate+"\tPreis:\t"+str(billPrice))
+        fileName=r""+companyName+r"_"+billDate+r"_"+str(billPrice)
+        print()
+        os.rename(pdfPath+file,pdfPath+fileName+r".pdf")
         print("\n")
 
 
